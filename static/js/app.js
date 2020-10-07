@@ -6,19 +6,42 @@
 var defaultFilePath = "static/data/flare-2.json";
 
 // Grab the width of the containing box
-var width = parseInt(d3.select("#tree").style("width"));
+// var width = parseInt(d3.select("#tree").style("width"));
 
 // Designate the height of the graph
-var height = width - width / 3.9;
+// var height = width - width / 3.9;
+
+// Interactive Tree
+// ====================================
+// Samir's code:
+var margin = {top: 20, right: 120, bottom: 20, left: 280},
+width = 960 - margin.right - margin.left,
+height = 480 - margin.top - margin.bottom;
 
 // Create the actual canvas for the graph
-var svg = d3
-.select("#tree")
-.append("svg")
+// var svg = d3
+// .select("#tree")
+// .append("svg")
+// .append("g")
+// .attr("width", width)
+// .attr("height", height)
+// .attr("class", "chart");
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
 .append("g")
-.attr("width", width)
-.attr("height", height)
-.attr("class", "chart");
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var i = 0,
+duration = 750,
+root;
+
+var tree = d3.layout.tree()
+.size([height, width]);
+
+var diagonal = d3.svg.diagonal()
+.projection(function(d) { return [d.y, d.x]; });
+
 
 // Import .csv file.
 // ========================
@@ -91,24 +114,6 @@ const visualize = (data) => {
 //   }
 //
 }
-
-
-// Interactive Tree
-// ====================================
-// Samir's code:
-var margin = {top: 20, right: 120, bottom: 20, left: 180},
-width = 960 - margin.right - margin.left,
-height = 480 - margin.top - margin.bottom;
-
-var i = 0,
-duration = 750,
-root;
-
-var tree = d3.layout.tree()
-.size([height, width]);
-
-var diagonal = d3.svg.diagonal()
-.projection(function(d) { return [d.y, d.x]; });
 
 
 d3.json("static/data/rules.json", function(error, flare) {
@@ -230,3 +235,30 @@ function click(d) {
   }
   update(d);
 }
+
+// Add file uploading
+// ====================================
+// Collect form data as a FormData object and add to client/uploads/.
+$('#fileForm').submit((e) => {
+  e.preventDefault()
+  console.log('sadf');
+  // Put eveything in the file form into a FormData object
+  var data = new FormData();
+  $.each(jQuery('#fileForm')[0].files, function(i, file) {
+      data.append('file-'+i, file);
+  });
+  $.ajax({
+
+      url: '/',
+      data: data,
+      cache: false,
+      contentType: false,
+      processData: false,
+      method: 'POST',
+      type: 'POST', // For jQuery < 1.9
+      success: function(data){
+          alert('asdfadsf');
+          console.log(data);
+      }
+  });
+});
